@@ -2,6 +2,11 @@ package com.nmdw.ansimon.global.error;
 
 import org.springframework.http.HttpStatus;
 
+/**
+ * 애플리케이션 전반에서 재사용하는 공개 오류 코드, 대응 HTTP 상태, 안전한 기본 메시지를 정의합니다.
+ * 비즈니스 예외와 외부 서비스 예외, 프레임워크 예외 처리기가 이 enum을 공유해 클라이언트 응답 형식을 일관되게 유지합니다.
+ * 내부 구현·외부 서비스의 상세 원인은 이 값에 포함하지 않아 민감한 실패 정보가 API로 새지 않게 합니다.
+ */
 public enum ErrorCode {
     VALIDATION_ERROR("GLOBAL_VALIDATION_ERROR", HttpStatus.BAD_REQUEST, "The request is invalid."),
     MALFORMED_REQUEST("GLOBAL_MALFORMED_REQUEST", HttpStatus.BAD_REQUEST, "The request could not be read."),

@@ -18,6 +18,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
+/**
+ * 기상청·쉼터·TMAP·ML·전화 연동에 사용할 서비스별 {@link WebClient} Bean을 구성합니다.
+ * 외부 설정에서 기본 주소와 인증 정보를 받고, 공통 연결·응답 타임아웃과 실패 변환 필터를 모든 클라이언트에 동일하게 적용합니다.
+ * 도메인 어댑터는 이 Bean을 사용해 외부 통신 정책을 재구현하지 않고도 안전한 예외 계약을 얻습니다.
+ */
 @Configuration
 @EnableConfigurationProperties({ExternalApiProperties.class, WebClientTimeoutProperties.class})
 public class WebClientConfig {
@@ -87,6 +92,11 @@ public class WebClientConfig {
         };
     }
 
+    /**
+     * 응답 본문을 읽는 중 발생한 네트워크·디코딩 실패까지 공통 외부 서비스 예외로 정규화하는 응답 래퍼입니다.
+     * {@link WebClientConfig}의 필터가 성공 응답에 감싸 반환하며, 이미 변환된 예외는 유지해 오류 분류가 중복되지 않게 합니다.
+     * 외부 API의 세부 실패 원인은 노출하지 않고 {@link WebClientErrorMapper}가 정한 안전한 오류 코드로 연결합니다.
+     */
     private static final class ErrorMappingClientResponse extends ClientResponseWrapper {
 
         private final WebClientErrorMapper errorMapper;

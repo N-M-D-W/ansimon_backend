@@ -22,6 +22,11 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 컨트롤러와 요청 바인딩 과정에서 발생한 예외를 표준 {@link ApiResponse} 실패 형식으로 변환하는 전역 MVC 예외 처리기입니다.
+ * {@link BusinessException}과 {@link ExternalServiceException}은 각자의 {@link ErrorCode}를 유지하고, 검증·역직렬화·프레임워크 예외는 안전한 공통 코드로 분류합니다.
+ * 필드 오류를 포함한 응답에서도 원본 입력값이나 내부 예외 메시지를 노출하지 않아 API 오류 응답의 보안 정책을 지킵니다.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

@@ -70,7 +70,7 @@ public class WebClientConfig {
                     WebClientErrorMapper.ExternalRequestContext.forService(serviceId, request.method());
             return next.exchange(request)
                     .flatMap(response -> response.statusCode().isError()
-                            ? Mono.error(errorMapper.forStatus(response.statusCode(), context))
+                            ? response.releaseBody().then(Mono.error(errorMapper.forStatus(response.statusCode(), context)))
                             : Mono.just(response))
                     .onErrorMap(throwable -> !(throwable instanceof ExternalServiceException),
                             throwable -> errorMapper.forFailure(throwable, context));

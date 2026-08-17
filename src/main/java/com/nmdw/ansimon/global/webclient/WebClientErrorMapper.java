@@ -37,7 +37,7 @@ public class WebClientErrorMapper {
                 : ErrorCode.EXTERNAL_SERVICE_SERVER_ERROR;
         log.warn("External service request failed: service={}, method={}, endpoint={}, status={}, correlationId={}",
                 context.serviceId(), context.method(), context.endpoint(), "unavailable", context.correlationId());
-        return new ExternalServiceException(errorCode, failure);
+        return new ExternalServiceException(errorCode);
     }
 
     private boolean hasTimeoutCause(Throwable failure) {

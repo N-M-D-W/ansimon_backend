@@ -15,4 +15,7 @@ out/
 .DS_Store
 Thumbs.db
 
-docs/superpowers/
+
+/docs/
+/.worktrees/
+/.superpowers/

@@ -1,5 +1,7 @@
 package com.nmdw.ansimon.global.response;
 
+import java.util.Objects;
+
 public record ApiResponse<T>(
         boolean success,
         T data,
@@ -11,6 +13,6 @@ public record ApiResponse<T>(
     }
 
     public static <T> ApiResponse<T> failure(ErrorResponse error) {
-        return new ApiResponse<>(false, null, error);
+        return new ApiResponse<>(false, null, Objects.requireNonNull(error, "error must not be null"));
     }
 }

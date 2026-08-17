@@ -75,9 +75,13 @@ public class WebClientConfig {
             WebClientErrorMapper.ExternalRequestContext context =
                     WebClientErrorMapper.ExternalRequestContext.forService(serviceId, request.method());
             return next.exchange(request)
-                    .flatMap(response -> response.statusCode().isError()
-                            ? response.releaseBody().then(Mono.error(errorMapper.forStatus(response.statusCode(), context)))
-                            : Mono.<ClientResponse>just(new ErrorMappingClientResponse(response, errorMapper, context)))
+                    .flatMap(response -> {
+                        ClientResponse mappedResponse = new ErrorMappingClientResponse(response, errorMapper, context);
+                        return response.statusCode().isError()
+                                ? mappedResponse.releaseBody().then(Mono.<ClientResponse>error(
+                                        errorMapper.forStatus(response.statusCode(), context)))
+                                : Mono.just(mappedResponse);
+                    })
                     .onErrorMap(throwable -> !(throwable instanceof ExternalServiceException),
                             throwable -> errorMapper.forFailure(throwable, context));
         };
@@ -116,16 +120,27 @@ public class WebClientConfig {
         }
 
         @Override
+        public Mono<Void> releaseBody() {
+            return map(super.releaseBody());
+        }
+
+        @Override
         @SuppressWarnings("unchecked")
         public <T> T body(BodyExtractor<T, ? super org.springframework.http.client.reactive.ClientHttpResponse> extractor) {
-            T body = super.body(extractor);
-            if (body instanceof Mono<?> mono) {
-                return (T) map(mono);
+            try {
+                T body = super.body(extractor);
+                if (body instanceof Mono<?> mono) {
+                    return (T) map(mono);
+                }
+                if (body instanceof Flux<?> flux) {
+                    return (T) map(flux);
+                }
+                return body;
+            } catch (ExternalServiceException exception) {
+                throw exception;
+            } catch (Throwable failure) {
+                throw mapFailure(failure);
             }
-            if (body instanceof Flux<?> flux) {
-                return (T) map(flux);
-            }
-            return body;
         }
 
         private <T> Mono<T> map(Mono<T> body) {

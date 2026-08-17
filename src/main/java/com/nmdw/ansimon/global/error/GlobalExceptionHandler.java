@@ -2,10 +2,12 @@ package com.nmdw.ansimon.global.error;
 
 import com.nmdw.ansimon.global.response.ApiResponse;
 import com.nmdw.ansimon.global.response.ErrorResponse;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -64,6 +67,19 @@ public class GlobalExceptionHandler {
         return failure(ErrorCode.METHOD_NOT_ALLOWED, Map.of());
     }
 
+    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNotAcceptable(HttpMediaTypeNotAcceptableException exception) {
+        return failure(ErrorCode.NOT_ACCEPTABLE, Map.of());
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ApiResponse<Void>> handleResponseStatus(ResponseStatusException exception) {
+        HttpStatusCode status = exception.getStatusCode();
+        return status.is4xxClientError()
+                ? failure(status, ErrorCode.VALIDATION_ERROR, Map.of())
+                : failure(ErrorCode.INTERNAL_ERROR, Map.of());
+    }
+
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleMissingResource(NoResourceFoundException exception) {
         return failure(ErrorCode.RESOURCE_NOT_FOUND, Map.of());
@@ -79,7 +95,12 @@ public class GlobalExceptionHandler {
     }
 
     private ResponseEntity<ApiResponse<Void>> failure(ErrorCode errorCode, Map<String, Object> details) {
+        return failure(errorCode.status(), errorCode, details);
+    }
+
+    private ResponseEntity<ApiResponse<Void>> failure(HttpStatusCode status, ErrorCode errorCode,
+                                                       Map<String, Object> details) {
         ErrorResponse error = new ErrorResponse(errorCode.code(), errorCode.message(), details);
-        return ResponseEntity.status(errorCode.status()).body(ApiResponse.failure(error));
+        return ResponseEntity.status(status).body(ApiResponse.failure(error));
     }
 }

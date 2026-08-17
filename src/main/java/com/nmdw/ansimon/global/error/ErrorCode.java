@@ -6,6 +6,7 @@ public enum ErrorCode {
     VALIDATION_ERROR("GLOBAL_VALIDATION_ERROR", HttpStatus.BAD_REQUEST, "The request is invalid."),
     MALFORMED_REQUEST("GLOBAL_MALFORMED_REQUEST", HttpStatus.BAD_REQUEST, "The request could not be read."),
     UNSUPPORTED_MEDIA_TYPE("GLOBAL_UNSUPPORTED_MEDIA_TYPE", HttpStatus.UNSUPPORTED_MEDIA_TYPE, "The request media type is not supported."),
+    NOT_ACCEPTABLE("GLOBAL_NOT_ACCEPTABLE", HttpStatus.NOT_ACCEPTABLE, "The requested response media type is not supported."),
     METHOD_NOT_ALLOWED("GLOBAL_METHOD_NOT_ALLOWED", HttpStatus.METHOD_NOT_ALLOWED, "The request method is not supported."),
     RESOURCE_NOT_FOUND("GLOBAL_RESOURCE_NOT_FOUND", HttpStatus.NOT_FOUND, "The requested resource was not found."),
     CONFLICT("GLOBAL_CONFLICT", HttpStatus.CONFLICT, "The request conflicts with the current state."),

@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     VALIDATION_ERROR("GLOBAL_VALIDATION_ERROR", HttpStatus.BAD_REQUEST, "The request is invalid."),
     MALFORMED_REQUEST("GLOBAL_MALFORMED_REQUEST", HttpStatus.BAD_REQUEST, "The request could not be read."),
+    UNSUPPORTED_MEDIA_TYPE("GLOBAL_UNSUPPORTED_MEDIA_TYPE", HttpStatus.UNSUPPORTED_MEDIA_TYPE, "The request media type is not supported."),
+    METHOD_NOT_ALLOWED("GLOBAL_METHOD_NOT_ALLOWED", HttpStatus.METHOD_NOT_ALLOWED, "The request method is not supported."),
     RESOURCE_NOT_FOUND("GLOBAL_RESOURCE_NOT_FOUND", HttpStatus.NOT_FOUND, "The requested resource was not found."),
     CONFLICT("GLOBAL_CONFLICT", HttpStatus.CONFLICT, "The request conflicts with the current state."),
     INTERNAL_ERROR("GLOBAL_INTERNAL_ERROR", HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred."),
@@ -22,15 +24,7 @@ public enum ErrorCode {
         this.message = message;
     }
 
-    public String code() {
-        return code;
-    }
-
-    public HttpStatus status() {
-        return status;
-    }
-
-    public String message() {
-        return message;
-    }
+    public String code() { return code; }
+    public HttpStatus status() { return status; }
+    public String message() { return message; }
 }

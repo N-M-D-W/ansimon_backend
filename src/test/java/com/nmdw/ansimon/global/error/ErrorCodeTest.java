@@ -13,11 +13,21 @@ class ErrorCodeTest {
         assertThat(ErrorCode.VALIDATION_ERROR.status()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(ErrorCode.MALFORMED_REQUEST.code()).isEqualTo("GLOBAL_MALFORMED_REQUEST");
         assertThat(ErrorCode.MALFORMED_REQUEST.status()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(ErrorCode.UNSUPPORTED_MEDIA_TYPE.code()).isEqualTo("GLOBAL_UNSUPPORTED_MEDIA_TYPE");
+        assertThat(ErrorCode.UNSUPPORTED_MEDIA_TYPE.status()).isEqualTo(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+        assertThat(ErrorCode.METHOD_NOT_ALLOWED.code()).isEqualTo("GLOBAL_METHOD_NOT_ALLOWED");
+        assertThat(ErrorCode.METHOD_NOT_ALLOWED.status()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED);
+        assertThat(ErrorCode.RESOURCE_NOT_FOUND.code()).isEqualTo("GLOBAL_RESOURCE_NOT_FOUND");
         assertThat(ErrorCode.RESOURCE_NOT_FOUND.status()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(ErrorCode.CONFLICT.code()).isEqualTo("GLOBAL_CONFLICT");
         assertThat(ErrorCode.CONFLICT.status()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(ErrorCode.INTERNAL_ERROR.code()).isEqualTo("GLOBAL_INTERNAL_ERROR");
         assertThat(ErrorCode.INTERNAL_ERROR.status()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(ErrorCode.EXTERNAL_SERVICE_TIMEOUT.code()).isEqualTo("GLOBAL_EXTERNAL_SERVICE_TIMEOUT");
         assertThat(ErrorCode.EXTERNAL_SERVICE_TIMEOUT.status()).isEqualTo(HttpStatus.GATEWAY_TIMEOUT);
+        assertThat(ErrorCode.EXTERNAL_SERVICE_CLIENT_ERROR.code()).isEqualTo("GLOBAL_EXTERNAL_SERVICE_CLIENT_ERROR");
         assertThat(ErrorCode.EXTERNAL_SERVICE_CLIENT_ERROR.status()).isEqualTo(HttpStatus.BAD_GATEWAY);
+        assertThat(ErrorCode.EXTERNAL_SERVICE_SERVER_ERROR.code()).isEqualTo("GLOBAL_EXTERNAL_SERVICE_SERVER_ERROR");
         assertThat(ErrorCode.EXTERNAL_SERVICE_SERVER_ERROR.status()).isEqualTo(HttpStatus.BAD_GATEWAY);
     }
 

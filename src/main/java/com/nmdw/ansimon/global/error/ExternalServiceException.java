@@ -1,12 +1,23 @@
 package com.nmdw.ansimon.global.error;
 
-public class ExternalServiceException extends BusinessException {
+import org.springframework.web.reactive.function.client.WebClientException;
+
+import java.util.Objects;
+
+public class ExternalServiceException extends WebClientException {
+
+    private final ErrorCode errorCode;
 
     public ExternalServiceException(ErrorCode errorCode) {
-        super(errorCode);
+        this(errorCode, null);
     }
 
     public ExternalServiceException(ErrorCode errorCode, Throwable cause) {
-        super(errorCode, cause);
+        super(Objects.requireNonNull(errorCode, "errorCode must not be null").message(), cause);
+        this.errorCode = errorCode;
+    }
+
+    public ErrorCode errorCode() {
+        return errorCode;
     }
 }

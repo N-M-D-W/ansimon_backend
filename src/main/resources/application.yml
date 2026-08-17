@@ -1,6 +1,8 @@
 spring:
   application:
     name: ansimon-backend
+  jackson:
+    time-zone: Asia/Seoul
   ai:
     vectorstore:
       type: ${SPRING_AI_VECTORSTORE_TYPE:none}

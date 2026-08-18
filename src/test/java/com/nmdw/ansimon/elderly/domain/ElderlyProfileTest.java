@@ -3,6 +3,8 @@ package com.nmdw.ansimon.elderly.domain;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,5 +51,25 @@ class ElderlyProfileTest {
         profile.updateConsentStatus(ConsentStatus.WITHDRAWN);
 
         assertThat(profile.getConsentStatus()).isEqualTo(ConsentStatus.WITHDRAWN);
+    }
+
+    @Test
+    void updatesHealthInfo() {
+        ElderlyProfile profile = newProfile();
+
+        profile.updateHealthInfo(LocalDate.of(1950, 3, 1), "고혈압, 당뇨");
+
+        assertThat(profile.getBirthDate()).isEqualTo(LocalDate.of(1950, 3, 1));
+        assertThat(profile.getHealthNote()).isEqualTo("고혈압, 당뇨");
+    }
+
+    @Test
+    void computesAgeFromBirthDateAndReturnsNullWhenMissing() {
+        ElderlyProfile withBirthDate = newProfile();
+        withBirthDate.updateHealthInfo(LocalDate.now(ZoneId.of("Asia/Seoul")).minusYears(75), null);
+        ElderlyProfile withoutBirthDate = newProfile();
+
+        assertThat(withBirthDate.getAge()).isEqualTo(75);
+        assertThat(withoutBirthDate.getAge()).isNull();
     }
 }

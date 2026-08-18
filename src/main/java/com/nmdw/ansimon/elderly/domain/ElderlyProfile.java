@@ -18,7 +18,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 
+/**
+ * 폭염 예방 지원의 관리 대상 노인 프로필을 표현하는 핵심 도메인 엔티티입니다.
+ * 기본 연락 정보, 주소 기반 위치, 행정구역 코드, 자동전화 동의 상태를 일관된 단위로 관리하며
+ * 주소 변경 시 위치 관련 값을 함께 변경하도록 도메인 연산을 제공합니다.
+ */
 @Entity
 @Table(
         name = "elderly_profile",
@@ -60,6 +68,12 @@ public class ElderlyProfile extends BaseTimeEntity {
     @Column(name = "consent_status", nullable = false, length = 30)
     private ConsentStatus consentStatus;
 
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
+
+    @Column(name = "health_note", length = 500)
+    private String healthNote;
+
     public void updateProfile(String displayName, String phone) {
         this.displayName = displayName;
         this.phone = phone;
@@ -74,5 +88,17 @@ public class ElderlyProfile extends BaseTimeEntity {
 
     public void updateConsentStatus(ConsentStatus consentStatus) {
         this.consentStatus = consentStatus;
+    }
+
+    public void updateHealthInfo(LocalDate birthDate, String healthNote) {
+        this.birthDate = birthDate;
+        this.healthNote = healthNote;
+    }
+
+    public Integer getAge() {
+        if (birthDate == null) {
+            return null;
+        }
+        return Period.between(birthDate, LocalDate.now(ZoneId.of("Asia/Seoul"))).getYears();
     }
 }

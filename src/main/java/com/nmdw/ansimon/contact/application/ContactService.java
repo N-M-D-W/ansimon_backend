@@ -12,6 +12,7 @@ import com.nmdw.ansimon.elderly.domain.ElderlyProfile;
 import com.nmdw.ansimon.elderly.infra.ElderlyProfileRepository;
 import com.nmdw.ansimon.global.error.BusinessException;
 import com.nmdw.ansimon.global.error.ErrorCode;
+import com.nmdw.ansimon.global.util.RegionCodes;
 import com.nmdw.ansimon.guidance.domain.GuidanceStatus;
 import com.nmdw.ansimon.guidance.domain.InterventionPlan;
 import com.nmdw.ansimon.guidance.infra.InterventionPlanRepository;
@@ -64,7 +65,7 @@ public class ContactService {
         ElderlyProfile elderly = elderlyProfileRepository.findById(request.elderlyId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND));
         RiskSnapshot riskSnapshot = riskSnapshotRepository
-                .findTopByRegionCodeOrderByGeneratedAtDesc(elderly.getRegionCode())
+                .findTopByRegionCodeOrderByGeneratedAtDesc(RegionCodes.siDoCode(elderly.getRegionCode()))
                 .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND));
         if (contactJobRepository.existsByIdempotencyKey(request.externalCallId())) {
             throw new BusinessException(ErrorCode.CONFLICT);

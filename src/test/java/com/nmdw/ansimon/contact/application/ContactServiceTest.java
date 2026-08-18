@@ -79,7 +79,7 @@ class ContactServiceTest {
         assertThat(plan.getGuidanceJson()).contains("실내에 머무르며 수분을 섭취하세요.");
         assertThat(plan.getQuestionsJson()).contains("호흡 확인");
         assertThat(plan.getEvidenceChunkIdsJson()).contains("kma-guide-2024-03");
-        assertThat(plan.getRiskSnapshot().getRegionCode()).isEqualTo("11110");
+        assertThat(plan.getRiskSnapshot().getRegionCode()).isEqualTo("11");
     }
 
     @Test
@@ -163,7 +163,7 @@ class ContactServiceTest {
     @Test
     void rejectsAnOutcomeWhenTheRegionHasNoRiskSnapshot() {
         when(elderlyProfileRepository.findById(1L)).thenReturn(Optional.of(elderly()));
-        when(riskSnapshotRepository.findTopByRegionCodeOrderByGeneratedAtDesc("11110")).thenReturn(Optional.empty());
+        when(riskSnapshotRepository.findTopByRegionCodeOrderByGeneratedAtDesc("11")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.registerCallOutcome(request(answeredCall())))
                 .isInstanceOfSatisfying(BusinessException.class,
@@ -172,7 +172,7 @@ class ContactServiceTest {
 
     private void givenElderlyAndRiskSnapshotExist() {
         when(elderlyProfileRepository.findById(1L)).thenReturn(Optional.of(elderly()));
-        when(riskSnapshotRepository.findTopByRegionCodeOrderByGeneratedAtDesc("11110"))
+        when(riskSnapshotRepository.findTopByRegionCodeOrderByGeneratedAtDesc("11"))
                 .thenReturn(Optional.of(riskSnapshot()));
         when(interventionPlanRepository.save(any(InterventionPlan.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -204,7 +204,7 @@ class ContactServiceTest {
     }
 
     private RiskSnapshot riskSnapshot() {
-        return RiskSnapshot.builder().regionCode("11110").riskScore(new BigDecimal("0.8000"))
+        return RiskSnapshot.builder().regionCode("11").riskScore(new BigDecimal("0.8000"))
                 .riskLevel(RiskLevel.HIGH).targetStartAt(endedAt).targetEndAt(endedAt.plusSeconds(3600))
                 .modelVersion("heatwave-v1").generatedAt(endedAt).build();
     }

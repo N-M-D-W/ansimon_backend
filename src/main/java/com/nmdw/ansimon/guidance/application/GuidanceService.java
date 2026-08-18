@@ -1,7 +1,5 @@
 package com.nmdw.ansimon.guidance.application;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nmdw.ansimon.elderly.domain.ElderlyProfile;
 import com.nmdw.ansimon.elderly.infra.ElderlyProfileRepository;
 import com.nmdw.ansimon.global.error.BusinessException;
@@ -17,6 +15,8 @@ import com.nmdw.ansimon.risk.domain.RiskSnapshot;
 import com.nmdw.ansimon.risk.infra.RiskSnapshotRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Map;
 
@@ -54,7 +54,8 @@ public class GuidanceService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND));
 
         GuidanceRequest request = new GuidanceRequest(
-                new GuidanceRequest.ElderlySummary(elderly.getAge(), elderly.getHealthNote()),
+                new GuidanceRequest.ElderlySummary(elderly.getDisplayName(), elderly.getPhone(),
+                        elderly.getAge(), elderly.getHealthNote()),
                 new GuidanceRequest.LocationSummary(elderly.getLatitude(), elderly.getLongitude()),
                 new GuidanceRequest.RiskSummary(riskSnapshot.getRiskScore(), riskSnapshot.getRiskLevel(),
                         riskSnapshot.getGeneratedAt())
@@ -80,7 +81,7 @@ public class GuidanceService {
     private String writeJson(Object value) {
         try {
             return objectMapper.writeValueAsString(value);
-        } catch (JsonProcessingException exception) {
+        } catch (JacksonException exception) {
             throw new BusinessException(ErrorCode.INTERNAL_ERROR, exception);
         }
     }

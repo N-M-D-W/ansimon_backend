@@ -6,7 +6,9 @@ import com.nmdw.ansimon.elderly.dto.ElderlyRegisterRequest;
 import com.nmdw.ansimon.elderly.dto.ElderlyUpdateRequest;
 import com.nmdw.ansimon.elderly.infra.ElderlyProfileRepository;
 import com.nmdw.ansimon.global.error.BusinessException;
+import com.nmdw.ansimon.global.error.ErrorCode;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
@@ -18,6 +20,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -55,6 +58,35 @@ class ElderlyServiceTest {
         assertThat(updated.address()).isEqualTo("서울시 마포구 2-2");
         assertThat(updated.consentStatus()).isEqualTo(ConsentStatus.WITHDRAWN);
         assertThatThrownBy(() -> service.getById(99L)).isInstanceOf(BusinessException.class);
+    }
+
+    @Test
+    void deletesAProfileThatHasNoInterventionHistory() {
+        ElderlyProfile profile = profile();
+        when(repository.findById(1L)).thenReturn(Optional.of(profile));
+
+        service.delete(1L);
+
+        verify(repository).delete(profile);
+    }
+
+    @Test
+    void rejectsDeletionOfAProfileThatDoesNotExist() {
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.delete(99L))
+                .isInstanceOfSatisfying(BusinessException.class,
+                        exception -> assertThat(exception.errorCode()).isEqualTo(ErrorCode.RESOURCE_NOT_FOUND));
+    }
+
+    @Test
+    void reportsAConflictWhenTheProfileIsStillReferencedByInterventionHistory() {
+        when(repository.findById(1L)).thenReturn(Optional.of(profile()));
+        doThrow(new DataIntegrityViolationException("fk")).when(repository).flush();
+
+        assertThatThrownBy(() -> service.delete(1L))
+                .isInstanceOfSatisfying(BusinessException.class,
+                        exception -> assertThat(exception.errorCode()).isEqualTo(ErrorCode.CONFLICT));
     }
 
     private GeocodingResult geocoded(String regionCode) {

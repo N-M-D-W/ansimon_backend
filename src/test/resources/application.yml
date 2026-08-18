@@ -1,4 +1,7 @@
 spring:
+  ai:
+    vectorstore:
+      type: none
   datasource:
     url: jdbc:h2:mem:ansimon-test;MODE=MySQL;DATABASE_TO_LOWER=TRUE
     username: sa

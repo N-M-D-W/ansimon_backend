@@ -75,4 +75,17 @@ public class CallObservation {
 
     @Column(name = "ended_at", nullable = false)
     private Instant endedAt;
+
+    /**
+     * 담당자가 확인한 내용으로 요약과 판정 항목을 교정합니다.
+     * 후속 지원 업무는 이 판정값으로 결정되므로, LLM이 잘못 판단한 항목을 사람이 바로잡을 수 있어야 합니다.
+     */
+    public void correct(String summary, TriState shelterIntent, TriState canMoveAlone,
+                        TriState helpNeeded, TriState symptomMentioned) {
+        this.summary = summary;
+        this.shelterIntent = shelterIntent;
+        this.canMoveAlone = canMoveAlone;
+        this.helpNeeded = helpNeeded;
+        this.symptomMentioned = symptomMentioned;
+    }
 }

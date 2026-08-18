@@ -4,4 +4,6 @@ import com.nmdw.ansimon.contact.domain.CallObservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CallObservationRepository extends JpaRepository<CallObservation, Long> {
+
+    boolean existsByContactJobId(Long contactJobId);
 }

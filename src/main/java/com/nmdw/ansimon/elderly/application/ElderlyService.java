@@ -9,6 +9,7 @@ import com.nmdw.ansimon.elderly.infra.ElderlyProfileRepository;
 import com.nmdw.ansimon.global.error.BusinessException;
 import com.nmdw.ansimon.global.error.ErrorCode;
 import com.nmdw.ansimon.global.response.PageResponse;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,6 +71,20 @@ public class ElderlyService {
                     StringUtils.hasText(request.healthNote()) ? request.healthNote() : profile.getHealthNote());
         }
         return ElderlyResponse.from(profile);
+    }
+
+    /**
+     * 잘못 등록한 대상자를 삭제합니다.
+     * 안내계획·전화 작업·지원 업무가 이미 남아 있으면 돌봄 이력이 끊기므로 외래키 제약이 삭제를 막고, 이를 충돌로 변환합니다.
+     * 이력이 있는 대상자는 삭제 대신 동의 철회(`WITHDRAWN`)로 관리합니다.
+     */
+    public void delete(Long id) {
+        repository.delete(findById(id));
+        try {
+            repository.flush();
+        } catch (DataIntegrityViolationException exception) {
+            throw new BusinessException(ErrorCode.CONFLICT, exception);
+        }
     }
 
     private ElderlyProfile findById(Long id) {

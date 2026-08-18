@@ -3,6 +3,8 @@ package com.nmdw.ansimon.elderly.api;
 import com.nmdw.ansimon.elderly.application.ElderlyService;
 import com.nmdw.ansimon.elderly.domain.ConsentStatus;
 import com.nmdw.ansimon.elderly.dto.ElderlyResponse;
+import com.nmdw.ansimon.global.error.BusinessException;
+import com.nmdw.ansimon.global.error.ErrorCode;
 import com.nmdw.ansimon.global.error.GlobalExceptionHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,10 @@ import java.time.Instant;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -45,6 +50,23 @@ class ElderlyControllerTest {
         mockMvc.perform(patch("/api/v1/elderly/1").contentType("application/json").content("{" + "\"consentStatus\":\"withdrawn\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
+    }
+
+    @Test
+    void deletesAnElderlyProfile() throws Exception {
+        mockMvc.perform(delete("/api/v1/elderly/1"))
+                .andExpect(status().isNoContent());
+
+        verify(elderlyService).delete(1L);
+    }
+
+    @Test
+    void reportsAConflictWhenTheProfileStillHasInterventionHistory() throws Exception {
+        doThrow(new BusinessException(ErrorCode.CONFLICT)).when(elderlyService).delete(1L);
+
+        mockMvc.perform(delete("/api/v1/elderly/1"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.success").value(false));
     }
 
     private ElderlyResponse response() {

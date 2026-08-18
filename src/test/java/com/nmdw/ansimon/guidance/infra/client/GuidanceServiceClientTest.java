@@ -59,7 +59,7 @@ class GuidanceServiceClientTest {
 
     private GuidanceRequest sampleRequest() {
         return new GuidanceRequest(
-                new GuidanceRequest.ElderlySummary(75, "고혈압"),
+                new GuidanceRequest.ElderlySummary("김안심", "010-1234-5678", 75, "고혈압"),
                 new GuidanceRequest.LocationSummary(new BigDecimal("37.5730000"), new BigDecimal("126.9794000")),
                 new GuidanceRequest.RiskSummary(new BigDecimal("0.8000"), RiskLevel.HIGH, Instant.now())
         );

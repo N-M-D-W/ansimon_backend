@@ -54,12 +54,6 @@ public class WebClientConfig {
     }
 
     @Bean
-    public WebClient phoneWebClient(WebClient.Builder builder, ExternalApiProperties properties,
-                                    WebClientTimeoutProperties timeoutProperties) {
-        return build(builder, properties.phone(), timeoutProperties, "phone");
-    }
-
-    @Bean
     public WebClient guidanceWebClient(WebClient.Builder builder, ExternalApiProperties properties,
                                        WebClientTimeoutProperties timeoutProperties) {
         return build(builder, properties.guidance(), timeoutProperties, "guidance");

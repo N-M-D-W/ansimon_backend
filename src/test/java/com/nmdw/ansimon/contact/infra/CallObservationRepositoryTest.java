@@ -114,6 +114,26 @@ class CallObservationRepositoryTest {
     }
 
     @Test
+    void reportsWhetherAContactJobAlreadyHasAnObservation() {
+        ContactJob contactJob = persistContactJob("call-observation-key-3");
+        assertThat(callObservationRepository.existsByContactJobId(contactJob.getId())).isFalse();
+
+        callObservationRepository.saveAndFlush(CallObservation.builder()
+                .contactJob(contactJob)
+                .contactStatus(ContactStatus.UNCONFIRMED)
+                .shelterIntent(TriState.UNKNOWN)
+                .canMoveAlone(TriState.UNKNOWN)
+                .helpNeeded(TriState.UNKNOWN)
+                .symptomMentioned(TriState.UNKNOWN)
+                .summary("미응답으로 통화 내용이 없습니다.")
+                .confidence(BigDecimal.ZERO)
+                .endedAt(Instant.now().truncatedTo(ChronoUnit.MILLIS))
+                .build());
+
+        assertThat(callObservationRepository.existsByContactJobId(contactJob.getId())).isTrue();
+    }
+
+    @Test
     void rejectsSecondObservationForSameContactJob() {
         ContactJob contactJob = persistContactJob("call-observation-key-2");
 

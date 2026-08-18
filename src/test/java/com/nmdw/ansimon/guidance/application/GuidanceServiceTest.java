@@ -1,6 +1,5 @@
 package com.nmdw.ansimon.guidance.application;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nmdw.ansimon.elderly.domain.ConsentStatus;
 import com.nmdw.ansimon.elderly.domain.ElderlyProfile;
 import com.nmdw.ansimon.elderly.infra.ElderlyProfileRepository;
@@ -15,6 +14,7 @@ import com.nmdw.ansimon.risk.domain.RiskLevel;
 import com.nmdw.ansimon.risk.domain.RiskSnapshot;
 import com.nmdw.ansimon.risk.infra.RiskSnapshotRepository;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -34,7 +34,7 @@ class GuidanceServiceTest {
     private final GuidanceServiceClient guidanceServiceClient = mock(GuidanceServiceClient.class);
     private final InterventionPlanRepository interventionPlanRepository = mock(InterventionPlanRepository.class);
     private final GuidanceService service = new GuidanceService(elderlyProfileRepository, riskSnapshotRepository,
-            guidanceServiceClient, interventionPlanRepository, new ObjectMapper());
+            guidanceServiceClient, interventionPlanRepository, JsonMapper.builder().build());
 
     @Test
     void assemblesTheRequestAndPersistsTheReturnedPlan() {

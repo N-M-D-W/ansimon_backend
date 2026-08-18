@@ -5,12 +5,16 @@
     password: ${MYSQL_PASSWORD}
     hikari:
       maximum-pool-size: 10
-      minimum-idle: 2
+      # Railway 공개 프록시(rlwy.net)는 유휴 TLS 연결을 끊으므로 유휴 커넥션을 유지하지 않는다
+      minimum-idle: 0
       connection-timeout: 10000
       validation-timeout: 3000
-      keepalive-time: 30000
-      idle-timeout: 60000
+      idle-timeout: 30000
       max-lifetime: 120000
+      data-source-properties:
+        connectTimeout: 10000
+        socketTimeout: 60000
+        tcpKeepAlive: true
   jpa:
     hibernate:
       ddl-auto: validate

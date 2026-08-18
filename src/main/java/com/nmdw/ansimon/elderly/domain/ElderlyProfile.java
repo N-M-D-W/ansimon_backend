@@ -28,7 +28,7 @@ import java.math.BigDecimal;
         }
 )
 @Getter
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "id", callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
@@ -59,4 +59,20 @@ public class ElderlyProfile extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "consent_status", nullable = false, length = 30)
     private ConsentStatus consentStatus;
+
+    public void updateProfile(String displayName, String phone) {
+        this.displayName = displayName;
+        this.phone = phone;
+    }
+
+    public void updateAddress(String address, BigDecimal latitude, BigDecimal longitude, String regionCode) {
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.regionCode = regionCode;
+    }
+
+    public void updateConsentStatus(ConsentStatus consentStatus) {
+        this.consentStatus = consentStatus;
+    }
 }

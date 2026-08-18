@@ -16,6 +16,7 @@ import com.nmdw.ansimon.guidance.domain.InterventionPlan;
 import com.nmdw.ansimon.risk.domain.RiskLevel;
 import com.nmdw.ansimon.risk.domain.RiskSnapshot;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -30,7 +31,7 @@ import static org.mockito.Mockito.when;
 class CallObservationServiceTest {
 
     private final CallObservationRepository repository = mock(CallObservationRepository.class);
-    private final CallObservationService service = new CallObservationService(repository);
+    private final CallObservationService service = new CallObservationService(repository, new ObjectMapper());
 
     private final Instant endedAt = Instant.parse("2026-08-19T02:30:00Z");
 

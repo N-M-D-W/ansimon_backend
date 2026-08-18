@@ -15,6 +15,8 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED("GLOBAL_METHOD_NOT_ALLOWED", HttpStatus.METHOD_NOT_ALLOWED, "The request method is not supported."),
     RESOURCE_NOT_FOUND("GLOBAL_RESOURCE_NOT_FOUND", HttpStatus.NOT_FOUND, "The requested resource was not found."),
     CONFLICT("GLOBAL_CONFLICT", HttpStatus.CONFLICT, "The request conflicts with the current state."),
+    CONSENT_REQUIRED("GLOBAL_CONSENT_REQUIRED", HttpStatus.FORBIDDEN, "The elderly has not consented to automated calls."),
+    GUIDANCE_GENERATION_BLOCKED("GLOBAL_GUIDANCE_GENERATION_BLOCKED", HttpStatus.UNPROCESSABLE_ENTITY, "Guidance generation was blocked by evidence verification."),
     INTERNAL_ERROR("GLOBAL_INTERNAL_ERROR", HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred."),
     EXTERNAL_SERVICE_TIMEOUT("GLOBAL_EXTERNAL_SERVICE_TIMEOUT", HttpStatus.GATEWAY_TIMEOUT, "An external service timed out."),
     EXTERNAL_SERVICE_CLIENT_ERROR("GLOBAL_EXTERNAL_SERVICE_CLIENT_ERROR", HttpStatus.BAD_GATEWAY, "An external service rejected the request."),

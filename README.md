@@ -113,6 +113,6 @@ FLUSH PRIVILEGES;
 | 무더위쉼터 | `SHELTER_API_KEY` | 쉼터 동기화 기능을 호출하지 않음 |
 | TMAP | `TMAP_API_KEY` | 경로 계산 기능을 호출하지 않음 |
 | ML 서버 | `ML_API_BASE_URL` | 위험도 연동 호출을 피하거나 로컬 서버 실행 |
-| LLM/RAG guidance 서버 | `GUIDANCE_BASE_URL`, `GUIDANCE_API_KEY` | 안내계획 생성·통화 요약 호출을 피하거나 로컬 서버 실행 |
+| 안심온 커넥션 서버 | `CONNECTION_BASE_URL`, `CONNECTION_API_KEY` | care-run 호출을 피하거나 로컬 서버 실행 |
 
 운영 키, 실제 전화번호 등 민감정보는 코드·README·Git에 저장하지 않습니다.

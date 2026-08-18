@@ -24,7 +24,8 @@ import reactor.netty.http.client.HttpClient;
  * 도메인 어댑터는 이 Bean을 사용해 외부 통신 정책을 재구현하지 않고도 안전한 예외 계약을 얻습니다.
  */
 @Configuration
-@EnableConfigurationProperties({ExternalApiProperties.class, WebClientTimeoutProperties.class})
+@EnableConfigurationProperties({ExternalApiProperties.class, WebClientTimeoutProperties.class,
+        ConnectionWebClientProperties.class})
 public class WebClientConfig {
 
     private final WebClientErrorMapper errorMapper = new WebClientErrorMapper();
@@ -54,9 +55,19 @@ public class WebClientConfig {
     }
 
     @Bean
-    public WebClient guidanceWebClient(WebClient.Builder builder, ExternalApiProperties properties,
-                                       WebClientTimeoutProperties timeoutProperties) {
-        return build(builder, properties.guidance(), timeoutProperties, "guidance");
+    public WebClient connectionWebClient(WebClient.Builder builder, ExternalApiProperties properties,
+                                         ConnectionWebClientProperties timeoutProperties) {
+        HttpClient httpClient = HttpClient.create()
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS,
+                        Math.toIntExact(timeoutProperties.getConnectionTimeout().toMillis()))
+                .responseTimeout(timeoutProperties.getResponseTimeout());
+        WebClient.Builder configuredBuilder = builder.clone()
+                .baseUrl(properties.connection().baseUrl())
+                .clientConnector(new ReactorClientHttpConnector(httpClient));
+        if (StringUtils.hasText(properties.connection().apiKey())) {
+            configuredBuilder.defaultHeader("Authorization", "Bearer " + properties.connection().apiKey());
+        }
+        return configuredBuilder.build();
     }
 
     private WebClient build(WebClient.Builder builder, ExternalApiProperties.Endpoint endpoint,

@@ -3,6 +3,14 @@
     url: ${MYSQL_URL}
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 10000
+      validation-timeout: 3000
+      keepalive-time: 30000
+      idle-timeout: 60000
+      max-lifetime: 120000
   jpa:
     hibernate:
       ddl-auto: validate
@@ -32,6 +40,10 @@ ansimon:
       api-key: ${TMAP_API_KEY}
     ml:
       base-url: ${ML_API_BASE_URL:http://localhost:8100}
-    guidance:
-      base-url: ${GUIDANCE_BASE_URL:http://localhost:9200}
-      api-key: ${GUIDANCE_API_KEY:}
+    connection:
+      base-url: ${CONNECTION_BASE_URL:http://localhost:7000}
+      api-key: ${CONNECTION_API_KEY:}
+  connection:
+    web-client:
+      connection-timeout: ${CONNECTION_WEBCLIENT_CONNECTION_TIMEOUT:2s}
+      response-timeout: ${CONNECTION_WEBCLIENT_RESPONSE_TIMEOUT:120s}

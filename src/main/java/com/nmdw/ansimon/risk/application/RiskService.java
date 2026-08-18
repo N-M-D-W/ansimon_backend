@@ -2,9 +2,11 @@ package com.nmdw.ansimon.risk.application;
 
 import com.nmdw.ansimon.global.error.BusinessException;
 import com.nmdw.ansimon.global.error.ErrorCode;
+import com.nmdw.ansimon.global.error.ExternalServiceException;
 import com.nmdw.ansimon.global.util.RegionCodes;
 import com.nmdw.ansimon.risk.domain.RiskLevel;
 import com.nmdw.ansimon.risk.domain.RiskSnapshot;
+import com.nmdw.ansimon.risk.dto.CurrentRiskResponse;
 import com.nmdw.ansimon.risk.dto.MlForecastResponse;
 import com.nmdw.ansimon.risk.dto.RiskForecastRequest;
 import com.nmdw.ansimon.risk.dto.RiskForecastResponse;
@@ -22,6 +24,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * ML 예측 API를 호출해 위험도 스냅샷을 만들고 저장하는 애플리케이션 서비스입니다.
@@ -46,6 +49,37 @@ public class RiskService {
         this.riskSnapshotRepository = riskSnapshotRepository;
         this.riskPolicyProperties = riskPolicyProperties;
         this.objectMapper = objectMapper;
+    }
+
+    /**
+     * 화면이 부를 때마다 오늘자 예측이 있는지 확인하고, 없으면 한 번 만들어 둡니다.
+     * 예방 전화(care-run)가 최신 위험도 스냅샷을 전제로 하므로, 담당자가 예측 버튼을 누르지 않아도 동작해야 합니다.
+     */
+    public CurrentRiskResponse current(String region) {
+        String regionName = StringUtils.hasText(region) ? region : DEFAULT_REGION;
+        String regionCode = RegionCodes.siDoCodeForName(regionName);
+        Instant todayStart = LocalDate.now(ASIA_SEOUL).atStartOfDay(ASIA_SEOUL).toInstant();
+
+        Optional<RiskSnapshot> today = riskSnapshotRepository
+                .findTopByRegionCodeAndGeneratedAtGreaterThanEqualOrderByGeneratedAtDesc(regionCode, todayStart);
+        if (today.isPresent()) {
+            return CurrentRiskResponse.of(today.get(), false);
+        }
+
+        try {
+            forecast(new RiskForecastRequest(regionName));
+        } catch (ExternalServiceException exception) {
+            // ML이 죽었다고 화면 전체가 빈손이 되면 안 되므로, 지난 예측이라도 있으면 오래되었다고 밝히고 내보냅니다.
+            RiskSnapshot previous = riskSnapshotRepository
+                    .findTopByRegionCodeOrderByGeneratedAtDesc(regionCode)
+                    .orElseThrow(() -> exception);
+            return CurrentRiskResponse.of(previous, true);
+        }
+
+        RiskSnapshot created = riskSnapshotRepository
+                .findTopByRegionCodeOrderByGeneratedAtDesc(regionCode)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND));
+        return CurrentRiskResponse.of(created, false);
     }
 
     public RiskForecastResponse forecast(RiskForecastRequest request) {

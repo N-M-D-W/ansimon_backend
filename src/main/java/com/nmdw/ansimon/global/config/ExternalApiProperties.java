@@ -13,7 +13,7 @@ public record ExternalApiProperties(
         Endpoint shelter,
         Endpoint tmap,
         Endpoint ml,
-        Endpoint phone
+        Endpoint guidance
 ) {
 
     /**

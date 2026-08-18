@@ -7,7 +7,7 @@ Spring AI 기반 LLM/RAG로 공식 근거를 검색하고 개인별 행동지침
 ```bash
 guidance/
 ├── api/           # 안내 계획 생성/조회 API
-├── application/   # 컨텍스트 조립, RAG 검색, LLM 호출, 결과 검증
+├── application/   # 컨텍스트 조립, guidance 서버 호출, 결과 검증/저장
 ├── domain/        # InterventionPlan, GuidanceStatus, EvidenceChunkRef 등
 ├── infra/
 │   └── client/    # 별도 LLM/RAG guidance 서버를 호출하는 WebClient 어댑터

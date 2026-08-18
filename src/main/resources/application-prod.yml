@@ -34,3 +34,6 @@ ansimon:
       base-url: ${ML_API_BASE_URL}
     phone:
       base-url: ${PHONE_API_BASE_URL}
+    guidance:
+      base-url: ${GUIDANCE_BASE_URL}
+      api-key: ${GUIDANCE_API_KEY}

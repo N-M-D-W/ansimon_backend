@@ -83,7 +83,7 @@ class WebClientConfigTest {
 
     private ExternalApiProperties endpoints() {
         ExternalApiProperties.Endpoint endpoint = new ExternalApiProperties.Endpoint("https://provider.example.test", "");
-        return new ExternalApiProperties(endpoint, endpoint, endpoint, endpoint, endpoint);
+        return new ExternalApiProperties(endpoint, endpoint, endpoint, endpoint, endpoint, endpoint);
     }
 
     private record TestPayload(String value) { }

@@ -34,3 +34,6 @@ ansimon:
       base-url: ${ML_API_BASE_URL:http://localhost:8000}
     phone:
       base-url: ${PHONE_API_BASE_URL:http://localhost:9000}
+    guidance:
+      base-url: ${GUIDANCE_BASE_URL:http://localhost:9200}
+      api-key: ${GUIDANCE_API_KEY:}
